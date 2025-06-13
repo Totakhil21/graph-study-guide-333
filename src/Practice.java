@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 public class Practice {
 
@@ -132,7 +133,40 @@ public static void collectValuesDFS(Vertex<Integer> node, Set<Vertex<Integer>> v
    * @return a sorted list of all reachable vertex values
    */
   public static List<Integer> sortedReachable(Map<Integer, Set<Integer>> graph, int starting) {
-    return null;
+
+     if (!graph.containsKey(starting)) {
+        return new ArrayList<>();
+    }
+
+    Set<Integer> visited = new HashSet<>();    
+    List<Integer> result = new ArrayList<>();  
+    Stack<Integer> stack = new Stack<>();      
+
+    stack.push(starting); 
+
+    while (!stack.isEmpty()) {
+        int current = stack.pop();
+
+        if (!visited.contains(current)) {
+            visited.add(current);     
+            result.add(current);      
+
+            
+            Set<Integer> neighbors = graph.get(current);
+
+            if (neighbors != null) {
+                for (int neighbor : neighbors) {
+                    if (!visited.contains(neighbor)) {
+                        stack.push(neighbor);  
+                    }
+                }
+            }
+        }
+    }
+
+    Collections.sort(result); 
+    
+    return result;
   }
 
   /**
