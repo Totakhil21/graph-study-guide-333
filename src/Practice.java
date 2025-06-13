@@ -165,7 +165,7 @@ public static void collectValuesDFS(Vertex<Integer> node, Set<Vertex<Integer>> v
     }
 
     Collections.sort(result); 
-    
+
     return result;
   }
 
@@ -184,6 +184,40 @@ public static void collectValuesDFS(Vertex<Integer> node, Set<Vertex<Integer>> v
    * @return true if there is a two-way connection between v1 and v2, false otherwise
    */
   public static <T> boolean twoWay(Vertex<T> v1, Vertex<T> v2) {
+    if (v1 == null || v2 == null) {
+        return false;
+    }
+
+    
+    if (v1 == v2) {
+        return true;
+    }
+
+   
+    boolean canReach1to2 = canReach(v1, v2, new HashSet<>());
+
+    
+    boolean canReach2to1 = canReach(v2, v1, new HashSet<>());
+
+    
+    return canReach1to2 && canReach2to1;
+}
+
+
+public static <T> boolean canReach(Vertex<T> from, Vertex<T> to, Set<Vertex<T>> visited) {
+    if (from == to) return true; 
+    if (visited.contains(from)) return false; 
+
+    visited.add(from); 
+
+    
+    for (Vertex<T> neighbor : from.neighbors) {
+        if (canReach(neighbor, to, visited)) {
+            return true;
+        }
+    }
+
+    
     return false;
   }
 
@@ -200,7 +234,36 @@ public static void collectValuesDFS(Vertex<Integer> node, Set<Vertex<Integer>> v
    * @return whether there exists a valid positive path from starting to ending
    */
   public static boolean positivePathExists(Map<Integer, Set<Integer>> graph, int starting, int ending) {
-    return false;
+
+     if (!graph.containsKey(starting) || !graph.containsKey(ending)) {
+        return false;
+    }
+    if (starting <= 0 || ending <= 0) {
+        return false;
+    }
+
+    Set<Integer> visited = new HashSet<>();
+    return dfsPositive(graph, starting, ending, visited);
+}
+
+
+public static boolean dfsPositive(Map<Integer, Set<Integer>> graph, int current, int ending, Set<Integer> visited) {
+    if (current == ending) return true;       
+    if (visited.contains(current)) return false; 
+
+    visited.add(current); 
+
+    
+    for (int neighbor : graph.get(current)) {
+        
+        if (neighbor > 0 && graph.containsKey(neighbor)) {
+            if (dfsPositive(graph, neighbor, ending, visited)) {
+                return true; 
+            }
+        }
+    }
+
+    return false; 
   }
 
   /**
