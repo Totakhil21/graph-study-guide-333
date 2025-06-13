@@ -276,6 +276,33 @@ public static boolean dfsPositive(Map<Integer, Set<Integer>> graph, int current,
    * @return true if a person in the extended network works at the specified company, false otherwise
    */
   public static boolean hasExtendedConnectionAtCompany(Professional person, String companyName) {
+     if (person == null) {
+        return false;
+    }
+    
+    Set<Professional> visited = new HashSet<>();
+    return searchNetwork(person, companyName, visited);
+}
+
+
+private static boolean searchNetwork(Professional person, String companyName, Set<Professional> visited) {
+    if (person == null || visited.contains(person)) {
+        
+        return false;
+    }
+    visited.add(person); 
+
+    if (companyName.equals(person.getCompany())) {
+        return true;
+    }
+
+    
+    for (Professional connection : person.getConnections()) {
+        if (searchNetwork(connection, companyName, visited)) {
+            return true;
+        }
+    }
+    
     return false;
   }
 
@@ -347,6 +374,27 @@ public static boolean dfsPositive(Map<Integer, Set<Integer>> graph, int current,
    * @return an unsorted list of next moves
    */
   public static List<int[]> nextMoves(char[][] board, int[] current, int[][] directions) {
-    return null;
+    List<int[]> moves = new ArrayList<>(); 
+
+    int numRows = board.length;           
+    int numCols = board[0].length;        
+
+    int curRow = current[0];
+    int curCol = current[1];
+
+    for (int[] dir : directions) {
+        int newRow = curRow + dir[0];    
+        int newCol = curCol + dir[1];    
+
+        
+        if (newRow >= 0 && newRow < numRows && newCol >= 0 && newCol < numCols) {
+            
+            if (board[newRow][newCol] != 'X') {
+                moves.add(new int[]{newRow, newCol}); 
+            }
+        }
+    }
+
+    return moves;
   }
 }
